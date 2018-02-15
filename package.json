@@ -1,0 +1,32 @@
+{
+  "name": "collaborator",
+  "version": "1.0.0",
+  "description": "A real-time, socket based code editor ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "real-time",
+    "sockets"
+  ],
+  "author": "Varun Bhatia",
+  "license": "ISC",
+  "dependencies": {
+    "ajax-request": "^1.2.3",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.16.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.6",
+    "escape-json-node": "^2.0.0",
+    "express": "*",
+    "express-device": "^0.4.2",
+    "express-session": "^1.15.1",
+    "method-override": "^2.3.7",
+    "nodemon": "^1.11.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "request": "^2.83.0"
+  }
+}
