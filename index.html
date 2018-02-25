@@ -193,7 +193,7 @@
     <br>
     </div>
     <div class="text-center col-sm-6" style="background-opacity:100%">
-      <div class="col-sm-6">
+      <div class="col-sm-6" id = "commits" style="display: none">
         <button class = "btn btn-success" id = "cbtn1" onclick="commitbtn('clickbait', 1)">Commit1</button>
         <button class = "btn btn-danger" id = "clr1" style="display:none">Clear Commit</button>
         <br><br>
@@ -277,6 +277,41 @@
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script>
 
+      //###########################################
+      var checkIfAdmin = function(){
+        $.ajax({
+          url:'/getRooms',
+          type:'post',
+          success : function(data){
+            var roomNo = getParameterByName('room');
+            for(var i=0;i<data.length;i++){
+              console.log('roomNo', data[i]['roomNo']);
+              console.log('admin', data[i]['admin']);
+              if (data[i]['roomNo'] == roomNo && data[i]['admin']==getParameterByName('user')){
+                console.log('innerroomNo', data[i]['roomNo']);
+                console.log('inneradmin', data[i]['admin']);
+                check(true);
+                break;
+              }
+            }
+            
+          }
+        });
+      }
+
+      var check = function(value=false){
+        console.log('value', value);
+      
+      if(!value){
+        console.log('inside !checkAdmin');
+        document.getElementById('commits').style.display = 'none';
+      }
+      else{
+        document.getElementById('commits').style.display = 'block';
+      }
+    }
+    checkIfAdmin();
+      //###########################################
 
 
       function compile(){

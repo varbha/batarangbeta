@@ -19,7 +19,7 @@
 <!--     <script src = "bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
         
  -->    
-        <!-- <script src="jquery.sticky.js"></script> -->
+        <script src="jquery.sticky.js"></script>
 
     <title>Dashboard Page</title>
     <script>
@@ -55,10 +55,23 @@
                             kbd.textContent = ("Room "+ data[0]['rooms'][i]);
                             
                             var dynamicLink='http://localhost:9000/edit/?user='+username+'&room='+data[0]['rooms'][i];
-
-                            a.setAttribute('href', dynamicLink);
-                            a.appendChild(kbd);
-                            l.appendChild(a);
+                            
+                            var kbdadmin;
+                            if (checkIfAdmin(rdata, username, data[0]['rooms'][i])){
+                                kbdadmin = document.createElement('kbd');
+                                kbdadmin.setAttribute('id','roomadmin');
+                                kbdadmin.textContent = 'admin';
+                                a.setAttribute('href', dynamicLink);
+                                a.appendChild(kbd);
+                                l.appendChild(a);
+                                l.appendChild(kbdadmin);
+                            }
+                            else {
+                                a.setAttribute('href', dynamicLink);
+                                a.appendChild(kbd);
+                                l.appendChild(a);
+                            }
+                           
                            
                             
 
@@ -95,9 +108,22 @@
             async:true
 
         });
+        
+        var checkIfAdmin = function(rdata,username,currentRoom){
 
+            for (var i =0;i<rdata.length;i++){
+                if (rdata[i]['roomNo'] == currentRoom){
+                    if (rdata[i]['admin'] == username){
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+        }
 
         var refreshOnChange = function(){
+            console.log('refreshing..');
 
             $.ajax({
             url: 'http://localhost:9000/user',
@@ -130,10 +156,22 @@
                             var ulist = document.getElementById("roomList");
                             kbd.textContent = ("Room "+ data[0]['rooms'][i]);
                             var dynamicLink='http://localhost:9000/edit/?user='+username+'&room='+data[0]['rooms'][i];
-
-                            a.setAttribute('href', dynamicLink);
-                            a.appendChild(kbd);
-                            l.appendChild(a);
+                            var kbdadmin;
+                            if (checkIfAdmin(rdata, username, data[0]['rooms'][i])){
+                                kbdadmin = document.createElement('kbd');
+                                kbdadmin.setAttribute('id','roomadmin');
+                                kbdadmin.textContent = 'admin';
+                                a.setAttribute('href', dynamicLink);
+                                
+                                a.appendChild(kbd);
+                                l.appendChild(a);
+                                l.appendChild(kbdadmin);
+                            }
+                            else {
+                                a.setAttribute('href', dynamicLink);
+                                a.appendChild(kbd);
+                                l.appendChild(a);
+                            }
                             
                         for(var k =0;k< rdata.length;k++){
                            //console.log("RDATA: " +rdata[k]['roomNo']);
@@ -149,8 +187,10 @@
                                 kbd.setAttribute('id','lastmodifiedby');
                                 kbd.setAttribute('data-toggle','tooltip');
                                 kbd.setAttribute('title','User that last edited the code');
+                                if (rdata[k]['lastModifiedBy'] != ""){
                                 kbd.textContent = rdata[k]['lastModifiedBy'];
                                 l.appendChild(kbd);
+                                }
                             }
                         }
                         ulist.appendChild(l);
@@ -169,28 +209,63 @@
 
         //---------------------------------------------------------------------------------------------
 
-        var showRoomList = function(data){
-            console.log("SRL: ",data);
-            console.log("SRL: ",data.length);
-            var u = document.getElementById("roomListing");
-            $("#roomListing").empty();
-            for(let i = 0;i<data.length;i++){
-                //console.log(data[i]);
-                //console.log(data[i]['roomNo']);
-                //console.log(data[i]['roomDesc']);
+        var showRoomList = function(data = null){
 
-                if(data[i]['access']!='private'){
-                var l = document.createElement("li");
-                var p = document.createElement("p");
-                var ulist = document.getElementById("roomListing");
-                p.textContent = ("Room "+ data[i]['roomNo'] + "\n Room description: " + data[i]['roomDesc']);
-                l.appendChild(p);
-                u.appendChild(l);
+            if (data == null){
+                $.ajax({
+                    url: '/getRooms',
+                    type:'post',
+                    success:function(data){
+                        console.log("SRL: ",data);
+                        console.log("SRL: ",data.length);
+                        var u = document.getElementById("roomListing");
+                        $("#roomListing").empty();
+                        for(let i = 0;i<data.length;i++){
+                        //console.log(data[i]);
+                        //console.log(data[i]['roomNo']);
+                        //console.log(data[i]['roomDesc']);
+
+                            if(data[i]['access']!='private'){
+                                var l = document.createElement("li");
+                                var p = document.createElement("p");
+                                var ulist = document.getElementById("roomListing");
+                                p.textContent = ("Room "+ data[i]['roomNo'] + "\n Room description: " + data[i]['roomDesc']);
+                                l.appendChild(p);
+                                u.appendChild(l);
+                            }
+                        }
+
+                    }
+                });
             }
+            else {
+                console.log("SRL: ",data);
+                console.log("SRL: ",data.length);
+                var u = document.getElementById("roomListing");
+                $("#roomListing").empty();
+                for(let i = 0;i<data.length;i++){
+                        //console.log(data[i]);
+                        //console.log(data[i]['roomNo']);
+                        //console.log(data[i]['roomDesc']);
 
+                        if(data[i]['access']!='private'){
+                            var l = document.createElement("li");
+                            var p = document.createElement("p");
+                            var ulist = document.getElementById("roomListing");
+                            p.textContent = ("Room "+ data[i]['roomNo'] + "\n Room description: " + data[i]['roomDesc']);
+                            l.appendChild(p);
+                            u.appendChild(l);
+                        }
+                    }
+                }
+    }
 
-            }
-        }
+    var periodicUpdate = setInterval(function(){showRoomList()}, 50000);
+    var periodicUpdate2 = setInterval(function(){refreshOnChange()},5000);
+
+   $(document).ready(function(){
+    $("#availRoomList").sticky({topSpacing:0});
+  });
 
 
     </script>
@@ -258,9 +333,9 @@
             </div>
 
             <!-- ------------------------------------------------------------------------------------- -->
-            <div class = "col-md-4 col-lg-4" id="availRooms">
+            <div class = "col-md-4 col-lg-4" id="availRooms" style="margin-right: 20px">
 
-                <div class="card well" style="width: 40rem;">
+                <div class="card well" id="availRoomList" style="width: 40rem;">
 <!--                         <img class="card-img-top cc" src="material-wallpaper-8.jpg" alt="Card image cap">
  -->                        <div class="card-body">
                         <h3 class="card-title" data-toggle="collapse" data-target="#roomListInfo">Rooms you can join&nbsp;<span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span></h3>
