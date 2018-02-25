@@ -1,19 +1,3 @@
-//ROUTES GENERATED
-/*
-* /dashboard
-* /user
-* /
-* /edit
-* /register
-* /signin
-* /signup
-* /signinCheck
-* /createRoom
-* /compile
-* /query/
-* /secret
-*/
-
 // DEPENDENCIES
 var r = require('rethinkdb');
 var express = require('express');
@@ -59,6 +43,7 @@ var roomSchema = new Schema({
   roomNo : { type: String, required:true, unique:true},
   lastModifiedBy : String,
   roomDesc : String,
+  admin : String,
   access : String,
   commit1 : String,
   commit2 : String,
@@ -169,7 +154,7 @@ r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
 
 app.get('/dashboard', function(req,res){
   var name  = req.query.name;
-  res.sendFile(__dirname + '/dashboardbeta.html');
+  res.sendFile(__dirname + '/newdashboard.html');
   console.log("---------------------------------------------");
   console.log("USER NAME:" + name + "\nDASHBOARD DISPLAYED");
   console.log("---------------------------------------------");
@@ -226,6 +211,7 @@ app.post('/testCreateRoom', function(req,res){
                 lastModifiedBy : '',
                 roomDesc: req.body.roomDesc,
                 access : req.body.access,
+                admin : user_name,
                 commit1:null,
                 commit2:null,
                 commit3:null
@@ -469,8 +455,8 @@ app.post('/compile', function(req,res){
       json:true
   };
   request(options,function(err,resp,body){
-    console.log(resp);
-    console.log(resp.body);
+    //console.log(resp);
+    //console.log(resp.body);
     res.send(resp.body);
 
   });

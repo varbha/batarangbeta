@@ -1,0 +1,67 @@
+hr {
+    border-width: 2px;
+    border-color: #6A1B9A;
+}
+
+#welcome {
+    font-family: 'Roboto Slab', serif;
+    color:#695252;
+}
+.defNav {
+    background-image: url('material-wallpaper-8.jpg');
+}
+/*.card{
+    border-style: solid;
+}*/
+
+#roomm {
+    background-color: #6A1B9A;
+    color:white;
+
+}
+#roomadmin {
+    background-color: #C62828;
+    color:white;
+    margin-left: 2%;
+}
+p.card-text  kbd {
+    background-color:#FFEBEE;
+    color:black;
+}
+
+body {
+    
+    background-image: url('material-wallpaper-8.jpg');
+}
+.foot {
+    background-color:#EEEEEE;
+}
+.row-eq-height {
+    border:0px;
+    border-style: none;
+    border-color: none;
+
+}
+#lastmodifiedby {
+    background-color: #00E676;
+    color:white;
+    margin-left: 2%;
+}
+textarea.form-control {
+    margin-top: 0px;
+}
+.navbar {
+    border-color: #ffffff00;
+    margin-bottom: 0px;
+}
+.col-md-4, .col-lg-4 {
+    padding-right: 0px;
+}
+.btn-primary {
+    background-image: url('material-wallpaper-8.jpg');
+    color:white;
+}
+.btn-primary:hover {
+    color:white;
+    background-color: #6A1B9A;
+}

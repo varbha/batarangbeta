@@ -1,14 +1,28 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>DASHBOARD PAGE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="equal-height-columns.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animate.css">
+
+<!--     <link rel="stylesheet" href = "bootstrap-4.0.0-dist/css/bootstrap.min.css">
+ -->    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<!--     <script src = "bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
+        
+ -->    
+        <!-- <script src="jquery.sticky.js"></script> -->
+
+    <title>Dashboard Page</title>
     <script>
-
-
         $.ajax({
             url: 'http://localhost:9000/user',
             type: 'POST',
@@ -23,6 +37,8 @@
                     url:'/getRooms',
                     type:'post',
                     success: function(rdata){
+                        console.log("rdata", rdata);
+                        
                         document.getElementById("username").innerHTML = JSON.stringify(data[0]['user']);
                         document.getElementById("mail").innerHTML = JSON.stringify(data[0]['emailid']);
                         var u = (window.location.href).indexOf('=');
@@ -31,14 +47,20 @@
 
                         for(var i =0;i<data[0]['rooms'].length;i++){
                             var l = document.createElement("li");
+                            l.setAttribute('class','list-group-item');
                             var a = document.createElement("a");
+                            var kbd = document.createElement('kbd');
+                            kbd.setAttribute('id','roomm');
                             var ulist = document.getElementById("roomList");
-                            a.textContent = ("Room "+ data[0]['rooms'][i]);
+                            kbd.textContent = ("Room "+ data[0]['rooms'][i]);
+                            
                             var dynamicLink='http://localhost:9000/edit/?user='+username+'&room='+data[0]['rooms'][i];
 
                             a.setAttribute('href', dynamicLink);
+                            a.appendChild(kbd);
                             l.appendChild(a);
-                            ulist.appendChild(l);
+                           
+                            
 
 
                         for(var k =0;k< rdata.length;k++){
@@ -47,15 +69,21 @@
                             //console.log(rdata[k]['roomNo'] == data[0]['rooms'][i]);
                             if (rdata[k]['roomNo'] == data[0]['rooms'][i]){
                                 //console.log("ENTERED IF");
-                                var l2 = document.createElement("li");
-                                var a2 = document.createElement("a");
-                                var ulist = document.getElementById("roomList");
+                                // var l2 = document.createElement("li");
+                                // var a2 = document.createElement("a");
+                                // var ulist = document.getElementById("roomList");
                                 //console.log("DATA IN IF FOR K= " + k +" IS "+ rdata[k]['lastModifiedBy']);
-                                a2.textContent = ("Last Modified by: "+ rdata[k]['lastModifiedBy']);
-                                l2.appendChild(a2);
-                                ulist.appendChild(l2);
+                                var kbd = document.createElement('kbd');
+                                kbd.setAttribute('id','lastmodifiedby');
+                                kbd.setAttribute('data-toggle','tooltip');
+                                kbd.setAttribute('title','User that last edited the code');
+                                if (rdata[k]['lastModifiedBy'] != ""){
+                                kbd.textContent = rdata[k]['lastModifiedBy'];
+                                l.appendChild(kbd);
+                                }
                             }
                         }
+                        ulist.appendChild(l);
 
                     }
 
@@ -94,31 +122,37 @@
 
                         for(var i =0;i<data[0]['rooms'].length;i++){
                             var l = document.createElement("li");
+                            l.setAttribute('class','list-group-item');
                             var a = document.createElement("a");
+                            var kbd = document.createElement('kbd');
+                            kbd.setAttribute('id','roomm');
                             var ulist = document.getElementById("roomList");
-                            a.textContent = ("Room "+ data[0]['rooms'][i]);
+                            kbd.textContent = ("Room "+ data[0]['rooms'][i]);
                             var dynamicLink='http://localhost:9000/edit/?user='+username+'&room='+data[0]['rooms'][i];
 
                             a.setAttribute('href', dynamicLink);
+                            a.appendChild(kbd);
                             l.appendChild(a);
-                            ulist.appendChild(l);
-
-
+                            
                         for(var k =0;k< rdata.length;k++){
-                           // console.log("RDATA: " +rdata[k]['roomNo']);
+                           //console.log("RDATA: " +rdata[k]['roomNo']);
                             //console.log("DATA0: "+data[0]['rooms'][i]);
                             //console.log(rdata[k]['roomNo'] == data[0]['rooms'][i]);
                             if (rdata[k]['roomNo'] == data[0]['rooms'][i]){
                                 //console.log("ENTERED IF");
-                                var l2 = document.createElement("li");
-                                var a2 = document.createElement("a");
-                                var ulist = document.getElementById("roomList");
+                                // var l2 = document.createElement("li");
+                                // var a2 = document.createElement("a");
+                                // var ulist = document.getElementById("roomList");
                                 //console.log("DATA IN IF FOR K= " + k +" IS "+ rdata[k]['lastModifiedBy']);
-                                a2.textContent = ("Last Modified by: "+ rdata[k]['lastModifiedBy']);
-                                l2.appendChild(a2);
-                                ulist.appendChild(l2);
+                                var kbd = document.createElement('kbd');
+                                kbd.setAttribute('id','lastmodifiedby');
+                                kbd.setAttribute('data-toggle','tooltip');
+                                kbd.setAttribute('title','User that last edited the code');
+                                kbd.textContent = rdata[k]['lastModifiedBy'];
+                                l.appendChild(kbd);
                             }
                         }
+                        ulist.appendChild(l);
 
                     }
                     showRoomList(rdata);
@@ -131,6 +165,8 @@
         });
 
         }
+
+        //---------------------------------------------------------------------------------------------
 
         var showRoomList = function(data){
             console.log("SRL: ",data);
@@ -155,54 +191,101 @@
             }
         }
 
-    </script>
 
+    </script>
 </head>
 <body>
-    <div style = "width: 100%; overflow:hidden" >
-        <p id="welcome"></p>
-        <div style="width: 30%; float: left;">
-            <h1 id = "prof">Profile</h1>
-            <p id ="username"></p>
-            <p id = "mail"></p>
-        </div>
-        <div style="width:70%;float:right">
-            <div style = "width:50%; float:left">
-                <h1 id="userdetails">Room Details</h1>
-                <ul id="roomList"></ul>
 
-                <textarea placeholder="Enter the room number" maxlength="2" id="roomNumber" cols="30" rows="1"></textarea>
-                <br>
-                <!-- <button id="createRoom" onclick="createRoom()">Create Room</button> -->
-                <textarea placeholder="Enter the room description" maxlength="100" id="roomDesc" cols="50" rows="1"></textarea>
-                <p>Write <i>public</i> to create public room, or write <i>private</i> to create a private room</p>
-                <br>
-                <textarea placeholder="Enter the type" maxlength="7"  cols="30" rows="1" id="access"></textarea>
-                <br>
-                <button id="createRoom" onclick="createRoom()">Create Room</button>
-                <br><br>
-                <textarea placeholder="Enter the room number" maxlength="2" id="joiningRoom" cols="30" rows="1"></textarea>
-                <br>
-                <button id="joinRoom" onclick="joinRoom()">Join Room</button><br><br>
-                <textarea placeholder="Enter the room number" maxlength="2" id="exitingRoom" cols="30" rows="1"></textarea>
-                <br>
-                <button id="joinRoom" onclick="exitRoom()">Exit Room</button>
+    <nav class="navbar navbar-inverse defNav navbar-static-top">
+        <div class="container-fluid">
+            <div class = "navbar-header">
+                <a class = "navbar-brand" href="/">{Rethink_Collaborator}&nbsp;:&nbsp;Dashboard</a>
             </div>
-            <div style="width:50%; float:left">
-                <h2>Existing rooms on the platform:</h2>
-                <ul id="roomListing"></ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/"><span class="glyphicon glyphicon-user"></span>Log out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class = "container-fluid" id="outer">
+        <div class = "row row-eq-height">
+            <div class = "col-md-4 col-lg-4" id = "profile">
+                <div class="card well" style="width: 40rem;">
+                    <div class="card-body">
+                        <h3><strong id="welcome"></strong></h3>
+                        <hr>
+                        <h4 class="card-title" data-toggle="collapse" data-target="#profileinfo">Your profile&nbsp;<span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span></h4>
+                        <p class="card-text collapse" id="profileinfo">Your account details are displayed here. Any deletion in user details will delete all associated rooms, and the account must be remade.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><i>username</i><br><br>
+                        <p id = "username">varunbhatia</p></li>
+                    <li class="list-group-item"><i>email id</i><br><br><p id="mail">varunb95@gmail.com</p></li>
+                    <li class="list-group-item"><button class="btn btn-danger"><span class="glyphicon glyphicon-exclamation-sign" style="padding-left: 0px" aria-hidden="true"></span> Delete Account</button></li>
+                </ul>
+                
+                </div>
+
+            </div>
+<!-- ------------------------------------------------------------------------------------- -->
+
+            <div class = "col-md-4 col-lg-4" id="roomData">
+                <div class="card well" style="width: 40rem;">
+<!--                         <img class="card-img-top cc" src="material-wallpaper-8.jpg" alt="Card image cap">
+ -->                        <div class="card-body">
+                        <h3 class="card-title" data-toggle="collapse" data-target="#roomInfo">Control Panel&nbsp;<span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span></h3>
+                        <p class="card-text guide collapse" id="roomInfo">This is your control area. Use this to <kbd>create</kbd> rooms of your choice, <kbd>join</kbd> rooms you're interested in and <kbd>exit</kbd> rooms that you want to leave. </p>
+                </div>
+                <hr>
+                <ul class="list-group list-group-flush" id = "roomList">
+                </ul>
+                <div class="card-body">
+                        <textarea class = "form-control" id="roomNumber"  maxlength="2" placeholder="Room number to create" cols="10" rows="1"></textarea><br>
+                        <textarea class = "form-control" id="roomDesc" maxlength="100" placeholder="Room description" cols="10" rows="1"></textarea><br>
+                        <textarea class = "form-control" id="access" placeholder="Room access(public/private)" cols="10" rows="1" maxlength="7"></textarea><br>
+                        <button class = "btn btn-primary" onclick="createRoom()">Create a new room</button>
+                        <br><br>
+                        <textarea class = "form-control" id = "joiningRoom" maxlength="2" placeholder="Room number to join" cols="10" rows="1"></textarea><br>
+                        <button class = "btn btn-primary" onclick="joinRoom()">Join a new room</button>
+                        <br><br>
+                        <textarea class = "form-control" id = "exitingRoom" maxlength="2" placeholder="Room Number to exit" cols="10" rows="1"></textarea><br>
+                        <button class = "btn btn-primary" onclick="exitRoom()">Exit a room</button>
+
+                </div>
+                </div>
+
+            </div>
+
+            <!-- ------------------------------------------------------------------------------------- -->
+            <div class = "col-md-4 col-lg-4" id="availRooms">
+
+                <div class="card well" style="width: 40rem;">
+<!--                         <img class="card-img-top cc" src="material-wallpaper-8.jpg" alt="Card image cap">
+ -->                        <div class="card-body">
+                        <h3 class="card-title" data-toggle="collapse" data-target="#roomListInfo">Rooms you can join&nbsp;<span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span></h3>
+                        <p class="card-text collapse" id="roomListInfo">This section displays all the rooms that have been created on this platform, by other users, and the rooms you create yourself. All rooms that are created are public entities, by default</p>
+                        <hr>
+                </div>
+                <ul id="roomListing">
+                </ul>
+                <hr>
+                <p class="well"><kbd>Create</kbd> or <kbd>Join</kbd> new rooms using your Control Panel</p> 
+                </div>
+
+
+            </div>
+        </div>
     </div>
 
-
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-
-        var socket = io();
-
-        var u = (window.location.href).indexOf('=');
+<footer class="container-fluid foot text-center">
+    <p style="margin-top: 5px">Final Year Project: <kbd>Websocket Evented Real-Time Online Coding Collaborator</kbd></p>
+</footer>
+<script>
+    var u = (window.location.href).indexOf('=');
         var username = (window.location.href).substr(u+1);
         document.getElementById("welcome").innerHTML = "Welcome, " + username;
+
+        //-----------------------------------------------------------
 
         function createRoom(){
             var room = document.getElementById("roomNumber").value;
@@ -344,20 +427,7 @@
 
          }
 
-
-         /*console.log("here");
-         socket.on('updateRoomList', function(msg){
-            console.log("SOCKET FUNCTION: ",msg.reply);
-            $.ajax({
-                url:'/getRooms',
-                type:'post',
-                success:function(rdata){
-                    showRoomList(rdata);
-
-                }
-            });
-         });*/
-
-    </script>
+</script>
 </body>
 </html>
+
