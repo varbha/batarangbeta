@@ -79,9 +79,9 @@
           height: 100%;
           width: 100%;
           background-color:#000000;
-          /*background: url("/material-wallpaper-8.jpg") no-repeat center;*/
-          background-size:cover;
-          background-attachment: fixed;
+          background: url("/indexpageback.jpeg");
+          /* background-size:cover;
+          background-attachment: fixed; */
 
           font-family: arial;
       }
@@ -123,6 +123,25 @@
 				  color:#000000;
 				  background-color:white;
 			}
+
+      .btn-info {
+        background-image: url('/material-wallpaper-8.jpg');
+        border-color: purple;
+      }
+      .btn-info:hover {
+        border-color:rgb(30, 0, 58);
+        background-color: #000033;
+      }
+
+      .well {
+        color:black;
+        /* background-image: url('/material-wallpaper-8.jpg'); */
+      }
+      #commits { 
+        border-right-color: grey;
+        border-right-width: 2px;
+        border-right-style: solid;
+      }
     </style>
   </head>
 
@@ -146,8 +165,8 @@
             <div class="collapse navbar-collapse" id="myNavbar">
               <ul class="nav navbar-nav navbar-left">
                 <li><a href="/">route.about</a></li>
-                <li><a id = "dash_name" href="/dashboard">route.profile</a></li>
-                <li><a id= "dash_rooms" href="/rooms">route.rooms</a></li>
+                <li><a id = "dash_name" href="/dashboard">/profile</a></li>
+                <li><a id= "dash_rooms" href="/rooms">/rooms</a></li>
               </ul>
               <button class="btn btn-sm navbar-right btn-danger navbar-btn"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;log_out</button>
             </div>
@@ -165,15 +184,15 @@
         <span class="room">Room: </span><span id="roomno"></span>
         <span class="modlang">Language:</span><span id="modeinfo"></span><br>
 
-        <textarea id="editor"></textarea>
+        <textarea class = "form-control" id="editor"></textarea>
       </div>
     </div>
     <br>
 
-    <div class="container" style="opcaity:0" id=modeinput>
+    <div class="container-fluid" style="opcaity:0" id=modeinput>
       <div class="row">
-        <div class="col-sm-6">
-      <h3>Mode-Language control:</h3>
+        <div class="col-sm-6 col-lg-6 col-md-6">
+      <h3>Language control:</h3>
       <p>Use this to toggle between languages.</p>
       <form>
         <div class="form-group">
@@ -189,10 +208,10 @@
           </select>
         </div>
     </form>
-    <span><button class="btn btn-sm btn-success" style="color:#ffffff" type=button onclick="change()">change mode</button> </span>
+    <span><button class="btn btn-sm btn-info" style="color:#ffffff" type=button onclick="change()">Change Language</button> </span>
     <br>
     </div>
-    <div class="text-center col-sm-6" style="background-opacity:100%">
+    <div class="text-center col-sm-6 well" style="background-opacity:100%">
       <div class="col-sm-6" id = "commits" style="display: none">
         <button class = "btn btn-success" id = "cbtn1" onclick="commitbtn('clickbait', 1)">Commit1</button>
         <button class = "btn btn-danger" id = "clr1" style="display:none">Clear Commit</button>
@@ -204,22 +223,18 @@
         <button class = "btn btn-danger" id = "clr3" style="display:none">Clear Commit</button>
       </div>
       <div class="col-sm-6">
-        <h3><span class="glyphicon glyphicon-info-sign"></span> FAQ's</h3>
-        <p>Lorem ipsum dilor sur amet Lorem ipsum dilor sor amet <br>
-          Lorem ipsum dilor sur amet Lorem ipsum dilor sor amet <br>
-          Lorem ipsum dilor sur amet Lorem ipsum dilor sor amet <br>
-          Lorem ipsum dilor sur amet Lorem ipsum dilor sor amet <br>
-          Lorem ipsum dilor sur amet Lorem ipsum dilor sor amet <br>
-        </p>
+        <h4>Other users in this room</h4>
+        <ul id = "userslist"></ul>
 
       </div>
     </div>
   </div>
   <br>
-  <textarea id="stdin" rows="5" cols="5" style="height:100px" placeholder="stdin"></textarea>
-
-  <textarea id="compilearea" rows="5" cols="5" style="height:100px">Compiled result here</textarea>
-  <button class ="btn btn-sm btn-success" onclick="compile()">Compile</button>
+  <textarea id="stdin" class = "form-control" rows="5" cols="5" style="height:100px" placeholder="stdin"></textarea>
+  <br>
+  <textarea class = "form-control" id="compilearea" rows="5" cols="5" style="height:100px">Compiled result here</textarea>
+  <br>
+  <button class ="btn btn-info" onclick="compile()">Compile</button>
   <div class="row" id="only-html" style="display:none">
 
   <table width="100%" border="0" cellspacing="5" cellpadding="5">
@@ -268,6 +283,7 @@
     <link rel="stylesheet" href="/bower_components/codemirror/theme/duotone-light.css">
     <link rel="stylesheet" href="/bower_components/codemirror/theme/base16-dark.css">
     <link rel="stylesheet" href="/bower_components/codemirror/theme/base16-light.css">
+    <link rel="stylesheet" href="/bower_components/codemirror/theme/3024-day.css">
     <script src="/bower_components/codemirror/addon/mode/loadmode.js"></script>
     <script src="/bower_components/codemirror/mode/meta.js"></script>
     <script src="/bower_components/codemirror/addon/display/fullscreen.js"></script>
@@ -276,6 +292,39 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script>
+
+      var displayUsersList = function() {
+              console.log("refrshing...");
+              $.ajax({
+                url: '/getUsersOfRoom',
+                type:'post',
+                data: {
+                  "roomNo": getParameterByName('room')
+                },
+                success: function(data){
+                  if (data['reply']=="success"){
+                    $("#userslist").empty();
+                    console.log('returned user data', data);
+                    let roomToCheck = getParameterByName('room');
+                    for (var i =0;i<data['userdata'].length;i++){
+                      
+                      if (roomToCheck in data['userdata'][i]['rooms'] || roomToCheck == data['userdata'][i]['rooms'][0]){
+                        console.log("room userdata : ",data['userdata'][i]['rooms']);
+                        console.log("corresponding user : ", data['userdata'][i]['user']);
+                        li = document.createElement('li');
+                        ul = document.getElementById('userslist');
+                        li.textContent = data['userdata'][i]['user'];
+                        ul.append(li);
+
+                      } 
+                    }
+                  }
+                }
+              });
+      }
+      displayUsersList();
+
+      var periodicUpdate = setInterval(function(){displayUsersList()}, 50000);
 
       //###########################################
       var checkIfAdmin = function(){
@@ -399,7 +448,7 @@
 
         var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
             lineNumbers: true,
-            theme: "base16-dark",
+            theme: "paraiso-dark",
             extraKeys: {
         "F11": function(cm) {
           cm.setOption("fullScreen", !cm.getOption("fullScreen"));
@@ -410,7 +459,7 @@
       }
         });
 
-        //myCodeMirror.setSize('100%','100%');
+      //myCodeMirror.setSize('1200px','1000px');
 
 
         var modeInput = document.getElementById("mode");

@@ -350,6 +350,27 @@ app.post('/exitRoom', (req,res)=>{
 });
 
 
+app.post('/getUsersOfRoom', (req,res)=>{
+  console.log("-------------------------------------------");
+  console.log("ACCESSING USERS FOR ROOM NO: ", req.body.roomNo);
+
+  User.find(
+    {},
+    {_id:0, rooms:1, user:1}
+    ).then(returnedUser => {
+    if (returnedUser){
+      console.log("SENDING USER DATA");
+      console.log(returnedUser);
+      res.json({"reply":"success", "userdata":returnedUser});
+
+    }
+  }).catch(err => {
+    console.log("DB ERROR IN ACCESSING USER DATA");
+    res.json({"reply":"fail"});
+  });
+});
+
+
 // SIGNUP AND REGISTERATION LOGIC
 app.post('/signup',(req,res) => {
   console.log("---------------------------------------------");
