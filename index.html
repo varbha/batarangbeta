@@ -131,6 +131,7 @@
       .btn-info:hover {
         border-color:rgb(30, 0, 58);
         background-color: #000033;
+        
       }
 
       .well {
@@ -194,7 +195,7 @@
         <div class="col-sm-6 col-lg-6 col-md-6">
       <h3>Language control:</h3>
       <p>Use this to toggle between languages.</p>
-      <form>
+      <form style="width: 50%">
         <div class="form-group">
           <label for="mode">Select list (select one):</label>
           <select class="form-control"  id=mode>
@@ -214,13 +215,13 @@
     <div class="text-center col-sm-6 well" style="background-opacity:100%">
       <div class="col-sm-6" id = "commits" style="display: none">
         <button class = "btn btn-success" id = "cbtn1" onclick="commitbtn('clickbait', 1)">Commit1</button>
-        <button class = "btn btn-danger" id = "clr1" style="display:none">Clear Commit</button>
+        <button class = "btn btn-danger" id = "clr1" style="display:none" onclick = "clearcommit(1)">Clear Commit</button>
         <br><br>
         <button class = "btn btn-success" id = "cbtn2" onclick="commitbtn('clickbait', 2)">Commit2</button>
-        <button class = "btn btn-danger" id = "clr2" style="display:none">Clear Commit</button>
+        <button class = "btn btn-danger" id = "clr2" style="display:none" onclick = "clearcommit(2)">Clear Commit</button>
         <br><br>
         <button class = "btn btn-success" id = "cbtn3" onclick="commitbtn('clickbait', 3)">Commit3</button>
-        <button class = "btn btn-danger" id = "clr3" style="display:none">Clear Commit</button>
+        <button class = "btn btn-danger" id = "clr3" style="display:none" onclick = "clearcommit(3)">Clear Commit</button>
       </div>
       <div class="col-sm-6">
         <h4>Other users in this room</h4>
@@ -307,8 +308,12 @@
                     console.log('returned user data', data);
                     let roomToCheck = getParameterByName('room');
                     for (var i =0;i<data['userdata'].length;i++){
-                      
-                      if (roomToCheck in data['userdata'][i]['rooms'] || roomToCheck == data['userdata'][i]['rooms'][0]){
+                      console.log(i);
+                      let currentuser = data['userdata'][i]['rooms'];
+                      var found = currentuser.find(function(elem){
+                        return elem  == roomToCheck;
+                      });
+                      if (found!=undefined){
                         console.log("room userdata : ",data['userdata'][i]['rooms']);
                         console.log("corresponding user : ", data['userdata'][i]['user']);
                         li = document.createElement('li');
@@ -317,14 +322,15 @@
                         ul.append(li);
 
                       } 
+                      } 
                     }
                   }
-                }
+                
               });
       }
       displayUsersList();
 
-      var periodicUpdate = setInterval(function(){displayUsersList()}, 50000);
+      var periodicUpdate = setInterval(function(){displayUsersList()}, 60000);
 
       //###########################################
       var checkIfAdmin = function(){
@@ -509,7 +515,7 @@
         }
 
         //COMMIT CODE:
-                $.ajax({
+          $.ajax({
           url:'/getCommits',
           type:'post',
           data:{'room':getParameterByName('room')},
@@ -607,7 +613,34 @@
             });
           }
 
+          function clearcommit(index){
+            $.ajax({
+              url:'/clearCommit',
+              type:'post',
+              data:{
+                'roomNo':getParameterByName('room'),
+                'index':index
+              },
+              success: function(data){
+                if(data['reply'] == 'success'){
+                  //clear commit successful, retrieving commit data again
+                  console.log("retreiving commit data again");
+                  window.alert("Commit data has benn cleared");
+                  document.getElementById('clr'+ index).style.display = 'none';
+                  $.ajax({
+                  url:'/getCommits',
+                  type:'post',
+                  data:{'room':getParameterByName('room')},
+                  success: (data)=>{
+                    console.log(data);
+                    populatecommitbtn(data);
+                      }
+                  });
 
+                }
+              }
+            });
+          }
 
         //---------------------------
 

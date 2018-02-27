@@ -349,6 +349,29 @@ app.post('/exitRoom', (req,res)=>{
 });
 });
 
+app.post('/clearCommit', (req,res) => {
+  let roomNoToUpdate = req.body.roomNo;
+  let index = req.body.index;
+  let commit_index = 'commit' + index;
+  Room.findOneAndUpdate({
+    roomNo : roomNoToUpdate
+  },
+{
+  [commit_index] : null
+}).then(modifiedRoom => {
+  if(modifiedRoom){
+    console.log("ROOM MODIFIED");
+    console.log(modifiedRoom);
+    res.json({"reply":"success"});
+  }
+  else {
+    console.log("ROOM NOT MODIFED");
+    res.json({"reply":"fail"});
+  }
+
+});
+});
+
 
 app.post('/getUsersOfRoom', (req,res)=>{
   console.log("-------------------------------------------");
