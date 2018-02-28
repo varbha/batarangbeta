@@ -500,7 +500,7 @@ app.post('/compile', function(req,res){
   };
   request(options,function(err,resp,body){
     //console.log(resp);
-    //console.log(resp.body);
+    console.log(resp.body);
     res.send(resp.body);
 
   });

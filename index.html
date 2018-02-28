@@ -143,6 +143,10 @@
         border-right-width: 2px;
         border-right-style: solid;
       }
+      .dropdown-menu li a {
+        color:black;
+        background-color:white;
+      }
     </style>
   </head>
 
@@ -167,7 +171,12 @@
               <ul class="nav navbar-nav navbar-left">
                 <li><a href="/">route.about</a></li>
                 <li><a id = "dash_name" href="/dashboard">/profile</a></li>
-                <li><a id= "dash_rooms" href="/rooms">/rooms</a></li>
+                <li class = "dropdown" id= "dash_rooms">
+                  <a class="dropdown-toggle" data-toggle="dropdown">/rooms
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="roomsGoHere">
+                  </ul>
+                </li>
               </ul>
               <button class="btn btn-sm navbar-right btn-danger navbar-btn"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;log_out</button>
             </div>
@@ -293,6 +302,49 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script>
+      $(document).ready(function(){
+
+         console.log("Accessing dropdown elements")
+            $.ajax({
+            url: 'http://localhost:9000/user',
+            type: 'POST',
+            data:{
+                "url": ('http://localhost:9000/dashboard?name=' +getParameterByName('user'))
+            },
+            dataType:'json',
+            success: function(data){
+                //document.getElementById("details").innerHTML = JSON.stringify(data[0]);
+                //console.log(data[0]);
+
+                        for(var i =0;i<data[0]['rooms'].length;i++){
+                          console.log("dropdown data: ", data);
+                          if (data[0]['rooms'][i] == getParameterByName('room')){
+                            continue;
+                          }
+                            var l = document.createElement("li");
+                            var a = document.createElement("a");
+                            a.setAttribute("target","_blank");
+                            var ulist = document.getElementById("roomsGoHere");
+                            console.log(ulist);
+                            a.textContent = ("Room "+ data[0]['rooms'][i]);
+                            a.setAttribute("style","color:black; background-color:black");
+                            l.setAttribute("style","background-color:black")
+                            
+                            var username = getParameterByName('user');
+                            
+                            var dynamicLink='http://localhost:9000/edit/?user='+username+'&room='+data[0]['rooms'][i];
+                            
+                            
+                            a.setAttribute('href', dynamicLink);
+                            l.appendChild(a);
+                            ulist.appendChild(l);
+                            
+                        }
+            }
+      });
+
+      })
+     
 
       var displayUsersList = function() {
               console.log("refrshing...");
@@ -404,8 +456,11 @@
             if (result.stderr==null && result.status.description=="Accepted"){
             document.getElementById("compilearea").innerHTML = result.stdout;
           }
-          else{
+          else if (result.stderr!=null){
             document.getElementById("compilearea").innerHTML = result.stderr;
+          }
+          else if (result.status['description'] == 'Compilation Error'){
+            document.getElementById('compilearea').innerHTML = result.compile_output;
           }
             console.log(result);
             console.log(myCodeMirror.getValue())
@@ -425,6 +480,7 @@
                 return false;
             }
             runCode();
+            
 
 
         function getParameterByName(name, url) {
