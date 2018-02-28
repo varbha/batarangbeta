@@ -1,0 +1,128 @@
+.navbar {
+    margin-bottom: 0;
+    background-color: #b30000;
+background-image: url('/material-wallpaper-8.jpg');
+    z-index: 9999;
+border: 0;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    letter-spacing: 3px;
+    border-radius: 0;
+}
+
+.navbar li a, .navbar .navbar-brand {
+    color: #fff !important;
+}
+
+.navbar-brand {
+
+font-family: arial;
+letter-spacing: 1px;
+color: #b30000;
+
+}
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color:  #000033; !important;
+    background-color: #000 !important;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+    color: #fff !important;
+
+}
+#preloader {
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+  background-color:#141414; /* change if the mask should have another color then white */
+z-index:99; /* makes sure it stays on top */
+}
+
+#status {
+width:700px;
+height:700px;
+position:absolute;
+left:50%; /* centers the loading animation horizontally one the screen */
+top:50%; /* centers the loading animation vertically one the screen */
+background-image:url('/status2.gif'); /* path to your loading animation */
+background-repeat:no-repeat;
+background-position:center;
+margin:-350px 0 0 -350px; /* is width and height divided by two */
+}
+
+
+  html, body {
+      height: 100%;
+      width: 100%;
+      background-color:#000000;
+      background: url("/indexpageback.jpeg");
+      /* background-size:cover;
+      background-attachment: fixed; */
+
+      font-family: arial;
+  }
+
+
+  #editor-wrapper{
+      width: 100%;
+      margin-left:auto;
+      margin-right:auto;
+      margin-top:3em;
+
+
+
+  }
+  #modeinput {
+     width: 100%;
+     margin-left:auto;
+     margin-right:auto;
+   }
+
+
+  #username, #modeinfo {
+      color: #f3f3f3;
+  }
+
+  .ouser, .roomno {
+      color: #fff;
+  }
+  .cuser, .room, .modlang {
+      color: #999;
+  }
+  #footer {
+  color: #000000;
+  }
+  textarea, iframe {
+            border: 2px solid #ddd;
+            height: 500px;
+            width: 100%;
+              color:#000000;
+              background-color:white;
+        }
+
+  .btn-info {
+    background-image: url('/material-wallpaper-8.jpg');
+    border-color: purple;
+  }
+  .btn-info:hover {
+    border-color:rgb(30, 0, 58);
+    background-color: #000033;
+    
+  }
+
+  .well {
+    color:black;
+    /* background-image: url('/material-wallpaper-8.jpg'); */
+  }
+  #commits { 
+    border-right-color: grey;
+    border-right-width: 2px;
+    border-right-style: solid;
+  }
+  .dropdown-menu li a {
+    color:black;
+    background-color:white;
+  }
