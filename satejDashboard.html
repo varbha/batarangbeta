@@ -2,30 +2,126 @@
 <html lang="en">
 
 <head>
+    <title>Real Time Collaborator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
-
-    <link rel="stylesheet" href="equal-height-columns.css" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="animate.css">
-
-    <!--     <link rel="stylesheet" href = "bootstrap-4.0.0-dist/css/bootstrap.min.css">
- -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        /* Remove the navbar's default margin-bottom and rounded borders */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0 0 0 0;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+
+        .row.content {
+            height: 450px
+        }
+
+        /* Set gray background color and 100% height */
+
+        .sidenav {
+            padding-top: 20px;
+            background-color: #f1f1f1;
+            height: 100%;
 
 
-    <!--     <script src = "bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>
-        
- -->
-    <script src="jquery.sticky.js"></script>
 
-    <title>Dashboard Page</title>
+        }
+
+        /* Set black background color, white text and some padding */
+
+        footer {
+            width: 100%;
+            height: 10%;
+            bottom: 0;
+
+
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+
+        /*  @media screen and (max-width: 767px) { */
+
+        .sidenav {
+            height: auto;
+            padding: 15px;
+        }
+
+        .row.content {
+            height: 100%;
+        }
+
+
+        /*    } */
+
+        .swell {
+            padding: 0 0 0 0;
+        }
+
+        #roomm {
+            background-color: purple;
+            color: white;
+
+        }
+
+        #desc {
+            background-color: orange;
+            color: white;
+        }
+
+        #roomadmin {
+            background-color: #c62828;
+            color: white;
+            margin-left: 2%;
+        }
+
+        #lastmodifiedby {
+            background-color: darkgreen;
+            margin-left: 2%;
+        }
+
+        a {
+            color: white;
+        }
+
+        h1 {
+            color: black;
+        }
+
+        #MyRooms {
+            margin-top: 23px;
+        }
+
+        #availRooms {
+            margin-top: 40px;
+        }
+
+        img {
+            border-radius: 50%;
+        }
+
+        hr {
+            border-width: 2px;
+            border-color: darkgray;
+            padding-top: 0px;
+            padding-bottom: 5px;
+        }
+    </style>
     <script>
         $.ajax({
             url: 'http://localhost:9000/user',
@@ -267,144 +363,108 @@
         var periodicUpdate = setInterval(function () { showRoomList() }, 50000);
         var periodicUpdate2 = setInterval(function () { refreshOnChange() }, 5000);
 
-        $(document).ready(function () {
-            $("#availRoomList").sticky({ topSpacing: 0 });
-        });
-
 
     </script>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-inverse defNav navbar-static-top">
+    <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">{Rethink_Collaborator}&nbsp;:&nbsp;Dashboard</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Real-Time Collaborator</a>
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="/">
-                        <span class="glyphicon glyphicon-user"></span>Log out</a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="localhost:9000">Dashboard</a>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="localhost:9000">
+                            <span class="glyphicon glyphicon-log-out"></span> Logout</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <div class="container-fluid" id="outer">
-        <div class="row row-eq-height">
-            <div class="col-md-4 col-lg-4" id="profile">
-                <div class="card well" style="width: 40rem;">
+    <div class="container-fluid text-center" style="height:100%;" id="profile">
+        <div class="row content" style="height:100%">
+            <div class="col-sm-0 col-lg-2 sidenav" style="height:100%;  background-color:#f2f2f2;display:block">
+                <img src="profilepic.png" style=" width:100px;height:100px ">
+                <br>
+                <br>
+                <div class="login-details">
                     <div class="card-body">
                         <h3>
-                            <strong id="welcome"></strong>
+                            <strong id="welcome">Welcome, Varun Bhatia</strong>
                         </h3>
                         <hr>
-                        <h4 class="card-title" data-toggle="collapse" data-target="#profileinfo">Your profile&nbsp;
-                            <span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span>
+                        <h4 class="card-title" data-target="#profileinfo" aria-expanded="false">Your username
                         </h4>
-                        <p class="card-text collapse" id="profileinfo">Your account details are displayed here. Any deletion in user details will delete all associated
-                            rooms, and the account must be remade.</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <i>username</i>
-                            <br>
-                            <br>
-                            <p id="username">varunbhatia</p>
-                        </li>
-                        <li class="list-group-item">
-                            <i>email id</i>
-                            <br>
-                            <br>
-                            <p id="mail">varunb95@gmail.com</p>
-                        </li>
-                        <li class="list-group-item">
-                            <button class="btn btn-danger">
-                                <span class="glyphicon glyphicon-exclamation-sign" style="padding-left: 0px" aria-hidden="true"></span> Delete Account</button>
-                        </li>
-                    </ul>
 
-                </div>
-
-            </div>
-            <!-- ------------------------------------------------------------------------------------- -->
-
-            <div class="col-md-4 col-lg-4" id="roomData">
-                <div class="card well" style="width: 40rem;">
-                    <!--                         <img class="card-img-top cc" src="material-wallpaper-8.jpg" alt="Card image cap">
- -->
-                    <div class="card-body">
-                        <h3 class="card-title controlpanel" data-toggle="collapse" data-target="#roomInfo">Control Panel&nbsp;
-                            <span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span>
-                            <br>
-                            <kbd id="roomm">Go to room</kbd>
-                            <kbd id="roomadmin">If you are the admin</kbd>
-                            <kbd id="lastmodifiedby">Last edit made by</kbd>
-                        </h3>
-                        <p class="card-text guide collapse" id="roomInfo">This is your control area. Use this to
-                            <kbd>create</kbd> rooms of your choice,
-                            <kbd>join</kbd> rooms you're interested in and
-                            <kbd>exit</kbd> rooms that you want to leave. </p>
-                    </div>
-                    <hr>
-                    <ul class="list-group list-group-flush" id="roomList">
-                    </ul>
-                    <div class="card-body">
-                        <textarea class="form-control" id="roomNumber" maxlength="2" placeholder="Room number to create" cols="10" rows="1"></textarea>
-                        <br>
-                        <textarea class="form-control" id="roomDesc" maxlength="100" placeholder="Room description" cols="10" rows="1"></textarea>
-                        <br>
-                        <textarea class="form-control" id="access" placeholder="Room access(public/private)" cols="10" rows="1" maxlength="7"></textarea>
-                        <br>
-                        <button class="btn btn-primary" onclick="createRoom()">Create a new room</button>
-                        <br>
-                        <br>
-                        <textarea class="form-control" id="joiningRoom" maxlength="2" placeholder="Room number to join" cols="10" rows="1"></textarea>
-                        <br>
-                        <button class="btn btn-primary" onclick="joinRoom()">Join a new room</button>
-                        <br>
-                        <br>
-                        <textarea class="form-control" id="exitingRoom" maxlength="2" placeholder="Room Number to exit" cols="10" rows="1"></textarea>
-                        <br>
-                        <button class="btn btn-primary" onclick="exitRoom()">Exit a room</button>
-
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- ------------------------------------------------------------------------------------- -->
-            <div class="col-md-4 col-lg-4" id="availRooms" style="margin-right: 20px">
-
-                <div class="card well" id="availRoomList" style="width: 40rem;">
-                    <!--                         <img class="card-img-top cc" src="material-wallpaper-8.jpg" alt="Card image cap">
- -->
-                    <div class="card-body">
-                        <h3 class="card-title" data-toggle="collapse" data-target="#roomListInfo">Rooms you can join&nbsp;
-                            <span class="animated wobble glyphicon glyphicon-chevron-down" style="font-size: 15px;color:#6A1B9A"></span>
-                        </h3>
-                        <p class="card-text collapse" id="roomListInfo">This section displays all the rooms that have been created on this platform, by other users, and
-                            the rooms you create yourself. All rooms that are created are public entities, by default</p>
+                        <p class="card-text" id="username"></p>
                         <hr>
+                        <h4> Your Email Address</h4>
+                        <p id="mail"></p>
                     </div>
-                    <ul id="roomListing">
-                    </ul>
-                    <hr>
-                    <p class="well">
-                        <kbd>Create</kbd> or
-                        <kbd>Join</kbd> new rooms using your Control Panel</p>
-                </div>
 
+                </div>
+            </div>
+            <div class="col-sm-3 col-lg-3 sidenav" style="height:100%;  background-color:#ffffff">
+                <h1 id="MyRooms">My Rooms</h1>
+                <hr>
+                <ul class="list-group list-group-flush" id="roomList">
+                </ul>
 
             </div>
+            <div class="col-sm-3 col-lg-3 text-left" style="height:100%;  background-color:#f2f2f2">
+                <br>
+                <h1 id="ControlPanel" class=" card-title controlpanel" data-toggle="collapse" data-target="#roomInfo" style="font-family: Inherit; font-size: 36px">Control Panel</h1>
+                <hr>
+
+                <textarea class="form-control" id="roomNumber" maxlength="2" placeholder="Room number to create" cols="10" rows="1"></textarea>
+                <br>
+                <textarea class="form-control" id="roomDesc" maxlength="100" placeholder="Room description" cols="10" rows="1"></textarea>
+                <br>
+                <textarea class="form-control" id="access" placeholder="Room access(public/private)" cols="10" rows="1" maxlength="7"></textarea>
+                <br>
+                <button class="btn btn-primary" onclick="createRoom()">Create a room</button>
+                <br>
+                <br>
+                <textarea class="form-control" id="joiningRoom" maxlength="2" placeholder="Room number to join" cols="10" rows="1"></textarea>
+                <br>
+                <button class="btn btn-primary" onclick="joinRoom()">Join a room</button>
+                <br>
+                <br>
+                <textarea class="form-control" id="exitingRoom" maxlength="2" placeholder="Room Number to exit" cols="10" rows="1"></textarea>
+                <br>
+                <button class="btn btn-primary" onclick="exitRoom()">Exit a room</button>
+
+
+                <p></p>
+            </div>
+            <div class="col-sm-3  col-lg-4 text-left" style="height:100%;  background-color:#ffffff">
+                <h1 id="availRoomsList"> Available Rooms</h1>
+                <hr>
+                <ul id="roomListing">
+                </ul>
+
+            </div>
+
         </div>
     </div>
 
-    <footer class="container-fluid foot text-center">
-        <p style="margin-top: 5px">Final Year Project:
-            <kbd>Websocket Evented Real-Time Online Coding Collaborator</kbd>
-        </p>
+    <footer class="container-fluid text-center" style="margin-bottom:0">
+        <p>Copyright RTC LTD</p>
     </footer>
     <script>
         var u = (window.location.href).indexOf('=');
@@ -552,7 +612,6 @@
             });
 
         }
-
     </script>
 </body>
 
