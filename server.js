@@ -12,6 +12,7 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/userdb');
 var request = require('request');
 var lang_code = require('./lang_codes.js');
+const adminP = require('./adminpasswords');
 
 
 
@@ -111,6 +112,13 @@ r.connect({ host: 'localhost', port: 28015 }, function (err, conn) {
         if (err) throw err;
       }); // table edited
     }); // socket function ends
+
+    socket.on('global-compile', function(roomNumber){
+      console.log("GLOBAL COMPILE");
+      io.emit('compile-now', roomNumber);
+      console.log("EMITTED");
+    });
+
     r.table('edit').changes().run(conn, function (err, cursor) {
       if (err) throw err;
       cursor.each(function (err, row) {
@@ -154,7 +162,7 @@ r.connect({ host: 'localhost', port: 28015 }, function (err, conn) {
 
 app.get('/dashboard', function (req, res) {
   var name = req.query.name;
-  res.sendFile(__dirname + '/satejDashboard.html');
+  res.sendFile(__dirname + '/newDashboard.html');
   console.log("---------------------------------------------");
   console.log("USER NAME:" + name + "\nDASHBOARD DISPLAYED");
   console.log("---------------------------------------------");
@@ -170,7 +178,7 @@ app.post('/user', function (req, res) {
   console.log("RETRIEVING FROM MONGODB");
   User.find({ user: user_name }, 'rooms emailid user', function (err, result) {
     if (err) console.log(err);
-    else if (result) res.send(result);
+    else if (result) {res.send(result); console.log(result)}
     else if (!result) res.redirect('/');
   });
   console.log("---------------------------------------------");
@@ -674,7 +682,26 @@ app.post('/deleteRoomData', (req, res) => {
     });
   });
 
-})
+});
+// ---------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+
+//admin functions
+
+app.post('/admin/:pass/deleteRoom/:roomNo', (req,res)=>{
+  let pass = req.params.pass;
+  console.log("admin request recieved");
+  if (pass == adminP.p01 || pass == adminP.p02){
+    //res.send("correct password");
+    console.log("Admin access allowed");
+    res.sendFile(__dirname + '/adminPage.html');
+  }
+  else{
+    res.send("incorrect password");
+  }
+
+
+});
 app.use('/bower_components', express.static('bower_components'));
 
 // Setup Express Listener
