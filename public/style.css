@@ -3,7 +3,7 @@ hr {
     border-color: #6A1B9A;
 }
 
-#welcome {
+#welcome, h6 {
     font-family: 'Roboto Slab', serif;
     color:#695252;
 }

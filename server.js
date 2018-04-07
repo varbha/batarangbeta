@@ -162,7 +162,7 @@ r.connect({ host: 'localhost', port: 28015 }, function (err, conn) {
 
 app.get('/dashboard', function (req, res) {
   var name = req.query.name;
-  res.sendFile(__dirname + '/newDashboard.html');
+  res.sendFile(__dirname + '/satejDashboard.html');
   console.log("---------------------------------------------");
   console.log("USER NAME:" + name + "\nDASHBOARD DISPLAYED");
   console.log("---------------------------------------------");

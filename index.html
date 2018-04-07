@@ -54,6 +54,11 @@
       color: #fff !important;
 
     }
+    #compilearea {
+      background-color: #000;
+      color: #ddd;
+      border-color: #000;
+    }
 
     #preloader {
       position: fixed;
@@ -207,14 +212,18 @@
             </ul>
           </li>
           <li>
-            <a  id="flashMessage" style="display:none;color:green"><i class="glyphicon glyphicon-console"></i>websocket connected</a>
+            <a id="flashMessage" style="display:none;color:green">
+              <i class="glyphicon glyphicon-console"></i>websocket connected</a>
           </li>
         </ul>
         <a href="/">
-        <button class="btn btn-sm navbar-right btn-danger navbar-btn">
-          <span class="glyphicon glyphicon-off"></span>
-        </button>
-      </a>
+          <button class="btn btn-sm navbar-right btn-danger navbar-btn">
+            <span class="glyphicon glyphicon-off"></span>
+          </button>
+        </a>
+        <button class="navbar-btn btn-danger btn btn-md"onclick="togglesize()" id="togglesz">Toggle</button>
+        <button class="navbar-btn btn-danger btn btn-md" onclick="togglecp()" id="togglecpval">Hide Control Panel</button>
+        <button class="navbar-btn btn-danger btn btn-md" onclick="stdinfunc()" id="stdinval">Show stdin</button>
       </div>
     </div>
   </nav>
@@ -224,7 +233,7 @@
 
 
   <div class="container bg-grey" style="color:#ffffff;">
-    <div class="row ">
+    <div class="row">
       <div class="col-sm-12" id="editor-wrapper">
         <span class="cuser">Current User: </span>
         <span id="username"></span>
@@ -240,8 +249,8 @@
     <br>
 
     <div class="container-fluid" style="opcaity:0" id=modeinput>
-      <div class="row">
-        <div class="col-sm-6 col-lg-6 col-md-6">
+      <div class="row" id="cprow">
+        <div class="col-sm-4 col-lg-4 col-md-4 well" style="margin-right:0px;border-right:white" >
           <h3>Language control:</h3>
           <p>Use this to toggle between languages.</p>
           <form style="width: 50%">
@@ -263,17 +272,20 @@
           </span>
           <br>
         </div>
+        <div class = "col-lg-2" id="options">
+          <!-- <button style="margin-left: 20px" class = "btn-info btn btn-md" id="changeSize" onclick = "changeSize()">Toggle editor</button> -->
+        </div>
         <div class="text-center col-sm-6 well" style="background-opacity:100%">
           <div class="col-sm-6" id="commits" style="display: none">
-            <button class="btn btn-success" id="cbtn1" onclick="commitbtn('clickbait', 1)">Commit1</button>
+            <button class="btn btn-info" id="cbtn1" onclick="commitbtn('clickbait', 1)">Save slot #1</button>
             <button class="btn btn-danger" id="clr1" style="display:none" onclick="clearcommit(1)">Clear Commit</button>
             <br>
             <br>
-            <button class="btn btn-success" id="cbtn2" onclick="commitbtn('clickbait', 2)">Commit2</button>
+            <button class="btn btn-info" id="cbtn2" onclick="commitbtn('clickbait', 2)">Save slot #2</button>
             <button class="btn btn-danger" id="clr2" style="display:none" onclick="clearcommit(2)">Clear Commit</button>
             <br>
             <br>
-            <button class="btn btn-success" id="cbtn3" onclick="commitbtn('clickbait', 3)">Commit3</button>
+            <button class="btn btn-info" id="cbtn3" onclick="commitbtn('clickbait', 3)">Save slot #3</button>
             <button class="btn btn-danger" id="clr3" style="display:none" onclick="clearcommit(3)">Clear Commit</button>
           </div>
           <div class="col-sm-6">
@@ -284,7 +296,7 @@
         </div>
       </div>
       <br>
-      <textarea id="stdin" class="form-control" rows="5" cols="5" style="height:100px" placeholder="stdin"></textarea>
+      <textarea id="stdin" class="form-control" rows="5" cols="5" style="height:100px;display:none" placeholder="stdin"></textarea>
       <br>
       <textarea class="form-control" id="compilearea" rows="5" cols="5" style="height:100px">Compiled result here</textarea>
       <br>
@@ -582,7 +594,7 @@
           }
         });
 
-        //myCodeMirror.setSize('1200px','1000px');
+        //myCodeMirror.setSize('1140','500');
 
 
         var modeInput = document.getElementById("mode");
@@ -685,7 +697,7 @@
           else if (commitData == "no data") {
             console.log("here");
             let cbtn = "cbtn" + index;
-            document.getElementById(cbtn).innerHTML = ("Commit" + index);
+            document.getElementById(cbtn).innerHTML = ("Save slot #" + index);
             document.getElementById(cbtn).setAttribute('onclick', ('commitbtn("clickbait",' + index + ')'));
           }
           else {
@@ -823,6 +835,50 @@
             $('.compile').click();
           }
         });
+
+        var togglecontrol = false; //false - display = TRUE, true - DISPLAY = FALSE
+        var toggles = false; //false = SMALL, true = LARGE
+        var stdinShow = false; //true:DISPLAYED, false : NOT DISPLAYED
+
+        function togglecp(){
+          if (!togglecontrol){
+            //hide the control panel
+            document.getElementById('cprow').style.display='none';
+            document.getElementById('togglecpval').innerHTML = 'Show control panel';
+            togglecontrol = true;
+          }
+          else {
+            document.getElementById('cprow').style.display='block';
+            document.getElementById('togglecpval').innerHTML = 'Hide control panel';
+            togglecontrol = false;
+          }
+        }
+
+        function togglesize(){
+          if(!toggles){
+            myCodeMirror.setSize('1140','500');
+            toggles = true;
+          }
+          else{
+            myCodeMirror.setSize('1140','320');
+            toggles = false;
+          }
+        }
+
+        function stdinfunc(){
+          if(!stdinShow){
+            document.getElementById('stdin').style.display = 'block';
+            document.getElementById('stdinval').innerHTML= 'Hide stdin';
+            stdinShow = true;
+          
+          }
+          else{
+            document.getElementById('stdin').style.display = 'none';
+            document.getElementById('stdinval').innerHTML= 'Show stdin';
+            stdinShow = false;
+
+          }
+        }
 
 
 
