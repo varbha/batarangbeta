@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/userdb');
 var request = require('request');
-var lang_code = require('./lang_codes.js');
+var lang_code = require('./lang_codes');
 const adminP = require('./adminpasswords');
 
 
