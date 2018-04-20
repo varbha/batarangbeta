@@ -1,0 +1,891 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>Edit | Collaborative Editor</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+    //<![CDATA[
+    $(window).on('load', function () { // makes sure the whole site is loaded
+      $('#status').fadeOut(); // will first fade out the loading animation
+      $('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website.
+      $('body').delay(350).css({ 'overflow': 'visible' });
+    })
+      //]]>
+  </script>
+  <style>
+    .navbar {
+      margin-bottom: 0;
+      background-color: #b30000;
+      background-image: url('/material-wallpaper-8.jpg');
+      z-index: 9999;
+      border: 0;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+      letter-spacing: 3px;
+      border-radius: 0;
+    }
+
+    .navbar li a,
+    .navbar .navbar-brand {
+      color: #fff !important;
+    }
+
+    .navbar-brand {
+
+      font-family: arial;
+      letter-spacing: 1px;
+      color: #b30000;
+
+    }
+
+    .navbar-nav li a:hover,
+    .navbar-nav li.active a {
+      background-color: #000 !important;
+    }
+
+    .navbar-default .navbar-toggle {
+      border-color: transparent;
+      color: #fff !important;
+
+    }
+    #compilearea {
+      background-color: #000;
+      color: #ddd;
+      border-color: #000;
+    }
+
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #141414;
+      /* change if the mask should have another color then white */
+      z-index: 99;
+      /* makes sure it stays on top */
+    }
+
+    #status {
+      width: 700px;
+      height: 700px;
+      position: absolute;
+      left: 50%;
+      /* centers the loading animation horizontally one the screen */
+      top: 50%;
+      /* centers the loading animation vertically one the screen */
+      background-image: url('/status2.gif');
+      /* path to your loading animation */
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: -350px 0 0 -350px;
+      /* is width and height divided by two */
+    }
+
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      /*background-color: #212121;*/
+      background: url("/indexpageback.jpeg");
+      /* background-size:cover;
+          background-attachment: fixed; */
+      font-family: arial;
+    }
+
+
+    #editor-wrapper {
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 3em;
+
+
+
+    }
+
+    #modeinput {
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+
+    #username,
+    #modeinfo {
+      color: #f3f3f3;
+
+    }
+
+    .ouser,
+    .roomno {
+      color: #fff;
+    }
+
+    .cuser,
+    .room,
+    .modlang {
+      color: #999;
+    }
+
+    #footer {
+      color: #000000;
+    }
+
+    textarea,
+    iframe {
+      border: 2px solid #ddd;
+      height: 500px;
+      width: 100%;
+      color: #000000;
+      background-color: white;
+    }
+
+    .btn-info {
+      background-image: url('/material-wallpaper-8.jpg');
+      border-color: purple;
+    }
+
+    .btn-info:hover {
+      border-color: rgb(30, 0, 58);
+      background-color: #000033;
+
+    }
+
+    .well {
+      color: black;
+      /* background-image: url('/material-wallpaper-8.jpg'); */
+    }
+
+    #commits {
+      border-right-color: grey;
+      border-right-width: 2px;
+      border-right-style: solid;
+    }
+
+    .dropdown-menu li a {
+      color: black;
+      background-color: white;
+    }
+  </style>
+</head>
+
+<!-- ########################################################################################## -->
+
+<body>
+  <div id="preloader">
+    <div id="status">&nbsp;</div>
+  </div>
+
+  <!--navbar section-->
+  <nav class="navs navbar navbar-default  navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+
+
+        </button>
+        <a class="navbar-brand navbar-left">
+          <span class="glyphicon glyphicon-indent-left"></span>{ Rethink_Collaborator }</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-left">
+          <li>
+            <a href="/">/about</a>
+          </li>
+          <li>
+            <a id="dash_name" href="/dashboard">/profile</a>
+          </li>
+          <li class="dropdown" id="dash_rooms">
+            <a class="dropdown-toggle" data-toggle="dropdown">/rooms
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" id="roomsGoHere">
+            </ul>
+          </li>
+          <li>
+            <a id="flashMessage" style="display:none;color:green">
+              <i class="glyphicon glyphicon-console"></i>websocket connected</a>
+          </li>
+        </ul>
+        <a href="/">
+          <button class="btn btn-sm navbar-right btn-danger navbar-btn">
+            <span class="glyphicon glyphicon-off"></span>
+          </button>
+        </a>
+        <button class="navbar-btn btn-danger btn btn-md"onclick="togglesize()" id="togglesz">Toggle</button>
+        <button class="navbar-btn btn-danger btn btn-md" onclick="togglecp()" id="togglecpval">Hide Control Panel</button>
+        <button class="navbar-btn btn-danger btn btn-md" onclick="stdinfunc()" id="stdinval">Show stdin</button>
+      </div>
+    </div>
+  </nav>
+  <!--navbar ends-->
+  <br>
+  <br>
+
+
+  <div class="container bg-grey" style="color:#ffffff;">
+    <div class="row">
+      <div class="col-sm-12" id="editor-wrapper">
+        <span class="cuser">Current User: </span>
+        <span id="username"></span>
+        <span class="room">Room: </span>
+        <span id="roomno"></span>
+        <span class="modlang">Language:</span>
+        <span id="modeinfo"></span>
+        <br>
+
+        <textarea class="form-control" id="editor"></textarea>
+      </div>
+    </div>
+    <br>
+
+    <div class="container-fluid" style="opcaity:0" id=modeinput>
+      <div class="row" id="cprow">
+        <div class="col-sm-4 col-lg-4 col-md-4 well" style="margin-right:0px;border-right:white" >
+          <h3>Language control:</h3>
+          <p>Use this to toggle between languages.</p>
+          <form style="width: 50%">
+            <div class="form-group">
+              <label for="mode">Select list (select one):</label>
+              <select class="form-control" id=mode>
+                <option>Python.py</option>
+                <option>JavaScript_vanilla.js</option>
+                <option>Java.java</option>
+                <option>HTML.html</option>
+                <option>CSS.css</option>
+                <option>C.c</option>
+                <option>C++.cpp</option>
+              </select>
+            </div>
+          </form>
+          <span>
+            <button class="btn btn-sm btn-info" style="color:#ffffff" type=button onclick="change()">Change Language</button>
+          </span>
+          <br>
+        </div>
+        <div class = "col-lg-2" id="options">
+          <!-- <button style="margin-left: 20px" class = "btn-info btn btn-md" id="changeSize" onclick = "changeSize()">Toggle editor</button> -->
+        </div>
+        <div class="text-center col-sm-6 well" style="background-opacity:100%">
+          <div class="col-sm-6" id="commits" style="display: none">
+            <button class="btn btn-info" id="cbtn1" onclick="commitbtn('clickbait', 1)">Save slot #1</button>
+            <button class="btn btn-danger" id="clr1" style="display:none" onclick="clearcommit(1)">Clear Commit</button>
+            <br>
+            <br>
+            <button class="btn btn-info" id="cbtn2" onclick="commitbtn('clickbait', 2)">Save slot #2</button>
+            <button class="btn btn-danger" id="clr2" style="display:none" onclick="clearcommit(2)">Clear Commit</button>
+            <br>
+            <br>
+            <button class="btn btn-info" id="cbtn3" onclick="commitbtn('clickbait', 3)">Save slot #3</button>
+            <button class="btn btn-danger" id="clr3" style="display:none" onclick="clearcommit(3)">Clear Commit</button>
+          </div>
+          <div class="col-sm-6">
+            <h4>Other users in this room</h4>
+            <ul id="userslist"></ul>
+
+          </div>
+        </div>
+      </div>
+      <br>
+      <textarea id="stdin" class="form-control" rows="5" cols="5" style="height:100px;display:none" placeholder="stdin"></textarea>
+      <br>
+      <textarea class="form-control" id="compilearea" rows="5" cols="5" style="height:100px">Compiled result here</textarea>
+      <br>
+      <button class="btn btn-info compile" onclick="compile()">
+        <kbd>Local</kbd>Compile</button>
+      <button class="btn btn-danger" id="globalcompile" style="display:none" onclick="globalCompile()">
+        <kbd>Admin</kbd>&nbsp;Global Compile</button>
+      <div class="row" id="only-html" style="display:none">
+
+        <table width="100%" border="0" cellspacing="5" cellpadding="5">
+          <tr>
+            <td width="50%" scope="col">&nbsp;</td>
+            <td width="50%" align="left" scope="col">
+              <input onclick="runCode();" type="button" value="Run Code">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <form>
+                <strong>Code</strong>
+                <textarea name="sourceCode" id="sourceCode">
+<html>
+<head>
+<title>Hello</title>
+</head>
+<body>
+<h1>Hello!</h1>
+<p>Write HTML, CSS or JavaScript code here and click 'Run Code'.</p>
+</body>
+</html>
+                        </textarea>
+              </form>
+            </td>
+            <td>
+              <strong>Output</strong>
+              <iframe name="targetCode" id="targetCode"></iframe>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+
+      <footer style="color:#ffffff" class="foot bg-grey container-fluid text-center">
+        <p> Made by Varun Bhatia &lt;&lt;Final Year Project&gt;&gt;
+          <br>
+          <span class="glyphicon glyphicon-indent-left"></span>Rethink Collaborator
+
+        </p>
+      </footer>
+
+      <!--#######################################################################################################-->
+
+      <script src="/bower_components/codemirror/lib/codemirror.js"></script>
+      <link rel="stylesheet" href="/bower_components/codemirror/lib/codemirror.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/addon/display/fullscreen.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/theme/paraiso-dark.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/theme/duotone-light.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/theme/base16-dark.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/theme/base16-light.css">
+      <link rel="stylesheet" href="/bower_components/codemirror/theme/3024-day.css">
+      <script src="/bower_components/codemirror/addon/mode/loadmode.js"></script>
+      <script src="/bower_components/codemirror/mode/meta.js"></script>
+      <script src="/bower_components/codemirror/addon/display/fullscreen.js"></script>
+
+
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+      <script>
+        var img = document.getElementById('flashMessage');
+
+        // var interval = setInterval(function () {
+        //   console.log("img ",img);
+        //   console.log(img.style.display);
+        //   if(img.style.display == "block") img.style.display="none"
+        //   else img.style.display="block"
+        // }, 1000);
+
+        $(document).ready(function () {
+
+          console.log("Accessing dropdown elements")
+          $.ajax({
+            url: 'http://localhost:9000/user',
+            type: 'POST',
+            data: {
+              "url": ('http://localhost:9000/dashboard?name=' + getParameterByName('user'))
+            },
+            dataType: 'json',
+            success: function (data) {
+              //document.getElementById("details").innerHTML = JSON.stringify(data[0]);
+              //console.log(data[0]);
+
+              for (var i = 0; i < data[0]['rooms'].length; i++) {
+                console.log("dropdown data: ", data);
+                if (data[0]['rooms'][i] == getParameterByName('room')) {
+                  continue;
+                }
+                var l = document.createElement("li");
+                var a = document.createElement("a");
+                a.setAttribute("target", "_blank");
+                var ulist = document.getElementById("roomsGoHere");
+                console.log(ulist);
+                a.textContent = ("Room " + data[0]['rooms'][i]);
+                a.setAttribute("style", "color:black; background-color:black");
+                l.setAttribute("style", "background-color:black")
+
+                var username = getParameterByName('user');
+
+                var dynamicLink = 'http://localhost:9000/edit/?user=' + username + '&room=' + data[0]['rooms'][i];
+
+
+                a.setAttribute('href', dynamicLink);
+                l.appendChild(a);
+                ulist.appendChild(l);
+
+              }
+            }
+          });
+
+        })
+
+
+        var displayUsersList = function () {
+          console.log("refrshing...");
+          $.ajax({
+            url: '/getUsersOfRoom',
+            type: 'post',
+            data: {
+              "roomNo": getParameterByName('room')
+            },
+            success: function (data) {
+              if (data['reply'] == "success") {
+                $("#userslist").empty();
+                console.log('returned user data', data);
+                let roomToCheck = getParameterByName('room');
+                for (var i = 0; i < data['userdata'].length; i++) {
+                  console.log(i);
+                  let currentuser = data['userdata'][i]['rooms'];
+                  var found = currentuser.find(function (elem) {
+                    return elem == roomToCheck;
+                  });
+                  if (found != undefined) {
+                    console.log("room userdata : ", data['userdata'][i]['rooms']);
+                    console.log("corresponding user : ", data['userdata'][i]['user']);
+                    li = document.createElement('li');
+                    ul = document.getElementById('userslist');
+                    li.textContent = data['userdata'][i]['user'];
+                    ul.append(li);
+
+                  }
+                }
+              }
+            }
+
+          });
+        }
+        displayUsersList();
+
+        var periodicUpdate = setInterval(function () { displayUsersList() }, 60000);
+
+        //###########################################
+        var checkIfAdmin = function () {
+          $.ajax({
+            url: '/getRooms',
+            type: 'post',
+            success: function (data) {
+              var roomNo = getParameterByName('room');
+              for (var i = 0; i < data.length; i++) {
+                console.log('roomNo', data[i]['roomNo']);
+                console.log('admin', data[i]['admin']);
+                if (data[i]['roomNo'] == roomNo && data[i]['admin'] == getParameterByName('user')) {
+                  console.log('innerroomNo', data[i]['roomNo']);
+                  console.log('inneradmin', data[i]['admin']);
+                  check(true);
+                  break;
+                }
+              }
+
+            }
+          });
+        }
+
+        var check = function (value = false) {
+          console.log('value', value);
+
+          if (!value) {
+            console.log('inside !checkAdmin');
+            document.getElementById('commits').style.display = 'none';
+            document.getElementById('globalcompile').style.display = 'none';
+          }
+          else {
+            document.getElementById('commits').style.display = 'block';
+            document.getElementById('globalcompile').style.display = 'inline';
+          }
+        }
+        checkIfAdmin();
+        //###########################################
+
+
+        function compile() {
+
+          console.log(myCodeMirror.getValue());
+          var lang = myCodeMirror.getMode().name;
+          console.log("lang: ", lang);
+
+          if (lang == 'null') {
+            window.alert('Choose a language');
+            return;
+          }
+          console.log(lang);
+          console.log("stdin: ", document.getElementById("stdin").value);
+          document.getElementById("compilearea").innerHTML = "Compiling..";
+          if (lang == 'clike') {
+            if (document.getElementById("modeinfo").textContent.indexOf('+') != -1) {
+              lang = 'cpp';
+            }
+            else {
+              lang = 'c';
+            }
+          }
+          else {
+            lang = myCodeMirror.getMode().name;
+          }
+          console.log("Recieving..");
+          $.ajax({
+            url: '/emergencyCompile',
+            type: 'post',
+            data: { "code": myCodeMirror.getValue(), "lang": lang, "stdin": document.getElementById("stdin").value },
+            success: function (result, status, xhr) {
+                document.getElementById("compilearea").innerHTML = result;
+
+              //$(#compilearea).text(result);
+            //   if (result.stderr == null && result.status.description == "Accepted") {
+            //     document.getElementById("compilearea").innerHTML = result.stdout;
+            //   }
+            //   else if (result.stderr != null) {
+            //     document.getElementById("compilearea").innerHTML = result.stderr;
+            //   }
+            //   else if (result.status['description'] == 'Compilation Error') {
+            //     document.getElementById('compilearea').innerHTML = result.compile_output;
+            //   }
+              console.log(result);
+              console.log(myCodeMirror.getValue())
+
+            }
+          })
+        }
+
+        function runCode() {
+          var content = document.getElementById('sourceCode').value;
+          var iframe = document.getElementById('targetCode');
+          iframe = (iframe.contentWindow) ? iframe.contentWindow : (iframe.contentDocument.document) ? iframe.contentDocument.document : iframe.contentDocument;
+          iframe.document.open();
+          iframe.document.write(content);
+          iframe.document.close();
+          return false;
+        }
+        runCode();
+
+
+
+        function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+
+        var room = getParameterByName('room');
+        var user = getParameterByName('user');
+
+        document.getElementById("username").innerHTML = user;
+        document.getElementById("roomno").innerHTML = room;
+        let dashVal = '/dashboard?name=' + user;
+        document.getElementById('dash_name').setAttribute('href', dashVal);
+        document.getElementById('dash_rooms').setAttribute('href', dashVal);
+
+
+
+        CodeMirror.modeURL = "/bower_components/codemirror/mode/%N/%N.js";
+
+
+        var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
+          lineNumbers: true,
+          theme: "paraiso-dark",
+          extraKeys: {
+            "F11": function (cm) {
+              cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            "Esc": function (cm) {
+              if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            }
+          }
+        });
+
+        //myCodeMirror.setSize('1140','500');
+
+
+        var modeInput = document.getElementById("mode");
+        CodeMirror.on(modeInput, "keypress", function (e) {
+          if (e.keyCode == 13) change();
+        });
+
+
+        function change() {
+          var val = modeInput.value, m, mode, spec;
+          if (m = /.+\.([^.]+)$/.exec(val)) {
+            var info = CodeMirror.findModeByExtension(m[1]);
+            if (info) {
+              mode = info.mode;
+              spec = info.mime;
+            }
+          } else if (/\//.test(val)) {
+            var info = CodeMirror.findModeByMIME(val);
+            if (info) {
+              mode = info.mode;
+              spec = val;
+            }
+          } else {
+            mode = spec = val;
+          }
+          if (mode) {
+
+            myCodeMirror.setOption("mode", spec);
+            CodeMirror.autoLoadMode(myCodeMirror, mode);
+            document.getElementById("modeinfo").textContent = spec;
+
+            if (mode == 'htmlmixed') {
+              alert("The tryit editor has been added to the page");
+              document.getElementById("only-html").style.display = "block";
+              //document.getElementById("editor").style.display="none";
+            }
+            else {
+              document.getElementById("only-html").style.display = "none";
+              //document.getElementById("editor").style.display=null;
+            }
+
+          }
+          else {
+            alert("Could not find a mode corresponding to " + val);
+          }
+        }
+
+        //COMMIT CODE:
+        $.ajax({
+          url: '/getCommits',
+          type: 'post',
+          data: { 'room': getParameterByName('room') },
+          success: (data) => {
+            console.log(data);
+            populatecommitbtn(data);
+          }
+        });
+
+        function populatecommitbtn(data) {
+          console.log("here0");
+          let i = 1;
+
+          for (var commit_status in data.reply) {
+            console.log(commit_status);
+            console.log(data.reply[commit_status]);
+            if (data.reply[commit_status] != null) {
+              commitbtn(data.reply[commit_status], i);
+            }
+            else {
+              console.log("here");
+              commitbtn("no data", i);
+            }
+            i += 1;
+          }
+        }
+
+        function commitbtn(commitData = null, index = null) {
+          if (commitData == "clickbait") {
+            console.log("commit btn has been clicked");
+            $.ajax({
+              url: '/commitCode',
+              type: 'post',
+              data: {
+                'room': getParameterByName('room'),
+                'commit': index,
+                'code': myCodeMirror.getValue()
+              },
+              success: (data) => {
+                if (data.reply == "success") {
+                  let cbtn = "cbtn" + index;
+                  let clr = "clr" + index;
+                  console.log("clr: ", clr);
+                  document.getElementById(cbtn).innerHTML = ("Rollback" + index);
+                  document.getElementById(cbtn).setAttribute('onclick', ('rollbtn("clickbait",' + index + ')'));
+                  document.getElementById(clr).style.display = "inline";
+                }
+              }
+            });
+          }
+          else if (commitData == "no data") {
+            console.log("here");
+            let cbtn = "cbtn" + index;
+            document.getElementById(cbtn).innerHTML = ("Save slot #" + index);
+            document.getElementById(cbtn).setAttribute('onclick', ('commitbtn("clickbait",' + index + ')'));
+          }
+          else {
+            let cbtn = "cbtn" + index;
+            let clr = "clr" + index;
+            document.getElementById(cbtn).innerHTML = ("Rollback" + index);
+            document.getElementById(cbtn).setAttribute('onclick', ('rollbtn("clickbait",' + index + ')'));
+            document.getElementById(clr).style.display = "inline";
+
+          }
+
+        };
+
+        function rollbtn(rolldata = "clickbait", index) {
+          $.ajax({
+            'url': '/getCommits',
+            'type': 'post',
+            'data': { 'room': getParameterByName('room') },
+            'success': (data) => {
+              if (data) {
+                let match_commit = "commit" + index;
+                for (commit in data.reply) {
+                  console.log(commit);
+                  if (commit == match_commit) {
+                    if (window.confirm("CONFIRM ROLLBACK")) {
+                      myCodeMirror.setValue(data.reply[commit]);
+                      console.log("rollbacked code: ", data.reply[commit]);
+                      //$('#editor').trigger('keyup');
+                      hack_rollback();
+                      break;
+                    }
+                    else {
+                      break;
+                    }
+
+
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        function clearcommit(index) {
+          $.ajax({
+            url: '/clearCommit',
+            type: 'post',
+            data: {
+              'roomNo': getParameterByName('room'),
+              'index': index
+            },
+            success: function (data) {
+              if (data['reply'] == 'success') {
+                //clear commit successful, retrieving commit data again
+                console.log("retreiving commit data again");
+                window.alert("Commit data has benn cleared");
+                document.getElementById('clr' + index).style.display = 'none';
+                $.ajax({
+                  url: '/getCommits',
+                  type: 'post',
+                  data: { 'room': getParameterByName('room') },
+                  success: (data) => {
+                    console.log(data);
+                    populatecommitbtn(data);
+                  }
+                });
+
+              }
+            }
+          });
+        }
+
+        //---------------------------
+
+        console.log("length" + myCodeMirror.getValue.length);
+        if (myCodeMirror.getValue().length == 0) {
+          myCodeMirror.getDoc()
+            .setValue
+            (
+            "#Welcome to Rethink Collaborator.\n#Here, you can edit and store your code within this room.\n#All changes will be stored and updated in real-time!\n#Press F11 to enter full screen mode, ESC to exit.\n#Change the language of this code by using the field below the editor."
+            );
+          console.log(myCodeMirror.getValue.length);
+        }
+
+
+
+        var socket = io();
+
+        $.ajax({
+          url: '/getData/' + room,
+          success: function (result, status, xhr) {
+            myCodeMirror.setValue(result.value);
+            console.log("getData ", result);
+          }
+        });
+
+        myCodeMirror.on('keyup', function () {
+          var msg = {
+            id: room,
+            user: user,
+            value: myCodeMirror.getValue()
+          }
+          socket.emit('document-update', msg);
+        });
+
+        function globalCompile() {
+          socket.emit('global-compile', getParameterByName('room'));
+          $('.compile').click();
+        }
+
+        function hack_rollback() {
+          var msg = {
+            id: room,
+            user: user,
+            value: myCodeMirror.getValue()
+          }
+          socket.emit('document-update', msg);
+        }
+
+        socket.on('doc', function (msg) {
+          if (msg.new_val.id === room && msg.new_val.user != user) {
+            //var current_pos = myCodeMirror.getCursor();
+            console.log(msg.new_val.value)
+            myCodeMirror.getDoc().setValue(msg.new_val.value);
+            //myCodeMirror.setCursor(current_pos);
+          }
+        });
+
+        socket.on('compile-now', function (roomNumber) {
+          console.log("global compilation recieved");
+          console.log("data = ", roomNumber);
+          if (roomNumber == getParameterByName('room')) {
+            console.log("this is the right room");
+            alert("GLOBAL COMPILE BY ADMIN")
+            $('.compile').click();
+          }
+        });
+
+        var togglecontrol = false; //false - display = TRUE, true - DISPLAY = FALSE
+        var toggles = false; //false = SMALL, true = LARGE
+        var stdinShow = false; //true:DISPLAYED, false : NOT DISPLAYED
+
+        function togglecp(){
+          if (!togglecontrol){
+            //hide the control panel
+            document.getElementById('cprow').style.display='none';
+            document.getElementById('togglecpval').innerHTML = 'Show control panel';
+            togglecontrol = true;
+          }
+          else {
+            document.getElementById('cprow').style.display='block';
+            document.getElementById('togglecpval').innerHTML = 'Hide control panel';
+            togglecontrol = false;
+          }
+        }
+
+        function togglesize(){
+          if(!toggles){
+            myCodeMirror.setSize('1140','500');
+            toggles = true;
+          }
+          else{
+            myCodeMirror.setSize('1140','320');
+            toggles = false;
+          }
+        }
+
+        function stdinfunc(){
+          if(!stdinShow){
+            document.getElementById('stdin').style.display = 'block';
+            document.getElementById('stdinval').innerHTML= 'Hide stdin';
+            stdinShow = true;
+          
+          }
+          else{
+            document.getElementById('stdin').style.display = 'none';
+            document.getElementById('stdinval').innerHTML= 'Show stdin';
+            stdinShow = false;
+
+          }
+        }
+
+
+
+
+
+      </script>
+</body>
+
+</html>

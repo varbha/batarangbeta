@@ -13,8 +13,9 @@ mongoose.connect('mongodb://localhost/userdb');
 var request = require('request');
 var lang_code = require('./lang_codes');
 const adminP = require('./adminpasswords');
-
-
+//fallback to when Judge0 is not working
+const PythonShell = require('python-shell');
+const fs = require('fs');
 
 // MIDDLEWARE
 app.use(compression());
@@ -158,6 +159,7 @@ r.connect({ host: 'localhost', port: 28015 }, function (err, conn) {
       io.emit('updateRoomList', {reply: 'NR'});
       console.log("SENT EVENT UPDATEROOM LIST")
 });*/
+
 
 
 app.get('/dashboard', function (req, res) {
@@ -446,7 +448,31 @@ app.post('/signinCheck', function (req, res) {
   });
 });
 
+app.post('/emergencyCompile', (req,res)=>{
+  
+  console.log("emergency compile");
+  console.log(req.body);
+  var code = req.body.code;
+  var lang = 'python';
+  var stdin = null;
+  var result = '';
+  fs.writeFileSync('pythonFile.py', code);
+  var pyshell = new PythonShell('pythonFile.py');
+  pyshell.on('message', function (message) {
+    // received a message sent from the Python script (a simple "print" statement)
+    console.log(message);
+    result += message;
+    pyshell.end(function (err) {
+      if (err){
+          throw err;
+      };
+  
+      console.log('finished');
+  });
+  res.send(result);
+});
 
+})
 
 // COMPILATION
 app.post('/compile', function (req, res) {
